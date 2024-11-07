@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+    input {
+        @apply border rounded p-2;
+    }
+
+    button {
+        @apply p-2 rounded bg-blue-500 text-white hover:bg-blue-400;
+    }
+}
