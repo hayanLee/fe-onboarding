@@ -13,9 +13,21 @@ class Auth {
     }
     async logIn(loginInfo: LoginInfo) {
         const res = await this.#axios.post('/login', loginInfo);
+        this.setAccessToken(res.data.accessToken);
         return res.data;
     }
-    async getUser() {}
+    setAccessToken(token: string) {
+        localStorage.setItem('accessToken', token);
+    }
+    async fetchUser() {
+        const accessToken = localStorage.getItem('accessToken') ?? '';
+        const res = await this.#axios.get('/user', {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        return res.data;
+    }
     async updateProfile() {}
 }
 
