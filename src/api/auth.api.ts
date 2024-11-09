@@ -28,7 +28,15 @@ class Auth {
         });
         return res.data;
     }
-    async updateProfile() {}
+    async updateProfile(updatedProfile) {
+        const accessToken = localStorage.getItem('accessToken') ?? '';
+        const res = await this.#axios.patch('/profile', updatedProfile, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        return res.data;
+    }
 }
 
 export default Auth;
