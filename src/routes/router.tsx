@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, redirect } from 'react-router-dom';
 import DefaultLayout from '../layouts/DefaultLayout';
 import Home from '../pages/Home';
 import Login from '../pages/Login';
@@ -10,7 +10,11 @@ const getAccessToken = () => {
     return localStorage.getItem('accessToken');
 };
 
-const isAuthenticated = !!getAccessToken();
+const authLoader = () => {
+    const isAuthenticated = !!getAccessToken();
+    if (!isAuthenticated) return redirect('/login');
+    return null;
+};
 
 const router = createBrowserRouter([
     {
@@ -20,8 +24,8 @@ const router = createBrowserRouter([
             { path: '/login', element: <Login /> },
             { path: '/signup', element: <Signup /> },
             {
-                element: <ProtectedRoute isAuthenticated={isAuthenticated} />,
-                children: [{ path: '/mypage', element: <Mypage /> }],
+                element: <ProtectedRoute />,
+                children: [{ path: '/mypage', element: <Mypage />, loader: authLoader }],
             },
         ],
     },
