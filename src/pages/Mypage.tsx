@@ -1,10 +1,10 @@
 import { useRef, useState } from 'react';
-import useUpdateProfile from '../hooks/mutations/useUpdateProfile';
+import useUpdateProfileMutation from '../hooks/mutations/useUpdateProfile';
 import useFetchQuery from '../hooks/queries/useFetchQuery';
 
 const Mypage = () => {
     const { data: userInfo, isPending } = useFetchQuery();
-    const { submitFormData } = useUpdateProfile();
+    const { submitFormData } = useUpdateProfileMutation();
     const nicknameRef = useRef<HTMLInputElement>(null);
     const [ImgUrl, setImgUrl] = useState<string>('');
     const [ImgFile, setImgFile] = useState<File | null>(null);

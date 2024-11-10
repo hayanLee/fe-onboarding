@@ -1,13 +1,8 @@
-import { useQuery } from '@tanstack/react-query';
-import api from '../api/api';
+import useFetchTodosQuery from '../hooks/queries/useFetchTodos';
 import { Todo } from '../types/todo.type';
-import todoKeys from '../utils/todoKeys';
 
 const Home = () => {
-    const { isPending, data: todos } = useQuery({
-        queryKey: [...todoKeys.todos()],
-        queryFn: () => api.ph.getTodos(),
-    });
+    const { isPending, data: todos } = useFetchTodosQuery();
 
     if (isPending) return <p>Loading...</p>;
 

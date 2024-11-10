@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../../api/api';
 
-const useUpdateProfile = () => {
+const useUpdateProfileMutation = () => {
     const queryClient = useQueryClient();
     const { mutate } = useMutation({
         mutationFn: (formData: FormData) => api.auth.updateProfile(formData),
@@ -22,4 +22,4 @@ const useUpdateProfile = () => {
     return { submitFormData };
 };
 
-export default useUpdateProfile;
+export default useUpdateProfileMutation;
