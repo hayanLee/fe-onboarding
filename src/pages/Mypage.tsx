@@ -1,46 +1,28 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
-import api from '../api/api';
+import { useRef, useState } from 'react';
+import useUpdateProfile from '../hooks/mutations/useUpdateProfile';
+import useFetchQuery from '../hooks/queries/useFetchQuery';
 
 const Mypage = () => {
-    const queryClient = useQueryClient();
-    const [formData, setformData] = useState<{ avatar: File | null; nickname: string }>({
-        avatar: null,
-        nickname: '',
-    });
-    const { data: userInfo, isPending } = useQuery({
-        queryKey: ['user'],
-        queryFn: () => api.auth.fetchUser(),
-    });
-
-    const { mutate } = useMutation({
-        mutationFn: (formData) => {
-            const data = new FormData();
-            if (formData.avatar) data.append('avatar', formData.avatar);
-            data.append('nickname', formData.nickname);
-            return api.auth.updateProfile(data);
-        },
-        onSuccess: () => {
-            alert('변경되었습니다');
-            queryClient.invalidateQueries(['user']);
-        },
-    });
+    const { data: userInfo, isPending } = useFetchQuery();
+    const { submitFormData } = useUpdateProfile();
+    const nicknameRef = useRef<HTMLInputElement>(null);
+    const [ImgUrl, setImgUrl] = useState<string>('');
+    const [ImgFile, setImgFile] = useState<File | null>(null);
 
     if (isPending) return <div>Loading...</div>;
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value, files } = e.target;
+        if (!e.target.files) return;
+        const file = e.target.files[0];
 
-        if (name === 'avatar') {
-            setformData((prev) => ({ ...prev, avatar: files?.[0] || null }));
-        } else {
-            setformData((prev) => ({ ...prev, nickname: value }));
-        }
+        const objectUrl = URL.createObjectURL(file);
+        setImgUrl(objectUrl);
+        setImgFile(file);
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        mutate(formData);
+        if (ImgFile) submitFormData(ImgFile, { nickname: nicknameRef.current?.value || '' });
     };
 
     return (
@@ -57,10 +39,12 @@ const Mypage = () => {
 
             <h3 className='text-xl font-semibold mt-8'>Profile Update</h3>
             <form className='flex flex-col' onSubmit={handleSubmit}>
-                <label htmlFor='profile'>프로필 이미지 :</label>
+                <label htmlFor='profile' className='flex'>
+                    프로필 이미지 :{ImgUrl && <img src={ImgUrl} alt='' className='aspect-square w-32 h-32' />}
+                </label>
                 <input type='file' id='profile' name='avatar' onChange={handleChange} />
                 <label htmlFor='nickname'>nickname : </label>
-                <input type='text' id='nickname' name='nickname' value={formData.nickname} onChange={handleChange} />
+                <input type='text' id='nickname' name='nickname' ref={nicknameRef} />
                 <button>Submit</button>
             </form>
         </div>
