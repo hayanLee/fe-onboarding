@@ -12,12 +12,12 @@ class Auth {
         return res.data;
     }
     async logIn(loginInfo: LoginInfo) {
-        const res = await this.#axios.post('/login?expiresIn=2m', loginInfo);
+        const res = await this.#axios.post('/login?expiresIn=5m', loginInfo);
         this.setAccessToken(res.data.accessToken);
 
         const parsedUrl = new URL(res.request.responseURL);
         const expiresIn = new URLSearchParams(parsedUrl.search).get('expiresIn');
-        this.setExpireToken(expiresIn);
+        this.setExpireToken(expiresIn || '1h');
 
         return res.data;
     }
@@ -41,7 +41,7 @@ class Auth {
             throw error;
         }
     }
-    async updateProfile(updatedProfile) {
+    async updateProfile(updatedProfile: FormData) {
         const accessToken = localStorage.getItem('accessToken') ?? '';
         const res = await this.#axios.patch('/profile', updatedProfile, {
             headers: {
@@ -54,13 +54,11 @@ class Auth {
     setAccessToken(token: string) {
         localStorage.setItem('accessToken', token);
     }
-    setExpireToken(expiresIn: string | null) {
+    setExpireToken(expiresIn: string) {
         const expirationTime = this.calcExpireTokenTime(expiresIn);
-        localStorage.setItem('expireToken', expirationTime);
+        localStorage.setItem('expireToken', expirationTime.toString());
     }
     calcExpireTokenTime(expiresIn: string) {
-        if (!expiresIn) return Date.now() + 1000 * 60 * 60;
-
         const match = expiresIn.match(/^(\d+)(s|m|h)$/);
         if (match) {
             const value = parseInt(match[1]);
@@ -73,6 +71,7 @@ class Auth {
 
             return Date.now() + millisec;
         }
+        return Date.now() + 1000 * 60 * 60;
     }
     isTokenExpired() {
         const expireTime = localStorage.getItem('expireToken');

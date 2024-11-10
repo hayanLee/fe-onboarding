@@ -9,11 +9,11 @@ const Signup = () => {
     const nicknameRef = useRef<HTMLInputElement>(null);
 
     const { mutate } = useMutation({ mutationFn: (formData: SignUpInfo) => api.auth.signUp(formData) });
-    const handleSubmit = (e) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        const email = emailRef.current.value.trim();
-        const password = passwordRef.current.value.trim();
-        const nickname = nicknameRef.current.value.trim() || crypto.randomUUID();
+        const email = emailRef.current?.value.trim();
+        const password = passwordRef.current?.value.trim();
+        const nickname = nicknameRef.current?.value.trim() || crypto.randomUUID();
 
         if (!email || !password) {
             alert('입력란을 모두 입력해주세요');

@@ -4,7 +4,7 @@ import Home from '../pages/Home';
 import Login from '../pages/Login';
 import Mypage from '../pages/Mypage';
 import Signup from '../pages/Signup';
-import ProtectedRoute from './protectedRoute';
+import ProtectedRoute from './ProtectedRoute';
 
 const getAccessToken = () => {
     return localStorage.getItem('accessToken');

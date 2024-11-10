@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import useLoginMutation from '../hooks/mutations/useLoginMutation';
+import { useLoginMutation } from '../hooks/mutations';
 
 const Login = () => {
     const emailRef = useRef<HTMLInputElement>(null);
